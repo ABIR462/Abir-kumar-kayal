@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AK — Loading</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f5f0;
+      --accent: #c8ff57;
+      --gray: #3a3a3a;
+      --muted: #888;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--black);
+      font-family: 'Syne', sans-serif;
+      color: var(--white);
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+      mix-blend-mode: difference;
+    }
+
+    /* Loader */
+    .loader {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    /* Top strip */
+    .strip-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: var(--black);
+      transform-origin: top;
+      transition: transform 1.2s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    .strip-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50%;
+      background: var(--black);
+      transform-origin: bottom;
+      transition: transform 1.2s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    .loader.open .strip-top { transform: scaleY(0); }
+    .loader.open .strip-bottom { transform: scaleY(0); }
+
+    /* Counter */
+    .counter-wrap {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      pointer-events: none;
+    }
+
+    .counter {
+      font-family: 'Syne Mono', monospace;
+      font-size: clamp(5rem, 15vw, 14rem);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1;
+      transition: opacity 0.4s ease;
+      letter-spacing: -0.05em;
+    }
+
+    /* Nav top bar */
+    .nav-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 300;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+    }
+
+    .nav-top.visible { opacity: 1; transform: translateY(0); }
+
+    .logo-text {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .nav-right {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* Bottom info */
+    .info-bottom {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 300;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+    }
+
+    .info-bottom.visible { opacity: 1; transform: translateY(0); }
+
+    .tagline {
+      font-size: clamp(0.65rem, 1.2vw, 0.8rem);
+      color: var(--muted);
+      max-width: 240px;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+    }
+
+    .skip-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.2rem;
+      border-radius: 100px;
+      cursor: none;
+      transition: all 0.3s ease;
+    }
+
+    .skip-btn:hover {
+      color: var(--white);
+      border-color: rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* Progress line */
+    .progress-line {
+      position: fixed;
+      bottom: 0; left: 0;
+      height: 1px;
+      width: 0;
+      background: var(--accent);
+      z-index: 400;
+      transition: width 0.05s linear;
+    }
+
+    /* Noise grain overlay */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 128px;
+    }
+
+    /* Dot grid */
+    .dot-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .dot-grid.show { opacity: 1; }
+
+    /* AK Initials big text */
+    .big-initials {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .big-initials.show { opacity: 1; }
+
+    .initials-text {
+      font-size: clamp(8rem, 25vw, 24rem);
+      font-weight: 800;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.05);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* Word reveal for counter end */
+    .reveal-word {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 250;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .reveal-word-inner {
+      font-size: clamp(2.5rem, 7vw, 7rem);
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.03em;
+      transform: translateY(100%);
+      transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    .reveal-word-inner span { color: var(--accent); }
+    .reveal-word-inner.up { transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="grain"></div>
+  <div class="dot-grid" id="dotGrid"></div>
+
+  <!-- Ghost initials behind -->
+  <div class="big-initials" id="bigInitials">
+    <span class="initials-text">AK</span>
+  </div>
+
+  <!-- Curtain strips -->
+  <div class="loader" id="loader">
+    <div class="strip-top"></div>
+    <div class="strip-bottom"></div>
+  </div>
+
+  <!-- Counter -->
+  <div class="counter-wrap" id="counterWrap">
+    <div class="counter" id="counter">0</div>
+  </div>
+
+  <!-- Name reveal -->
+  <div class="reveal-word" id="revealWord">
+    <div class="reveal-word-inner" id="revealInner">Abir Kumar<br><span>Kayal</span></div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="nav-top" id="navTop">
+    <div class="logo-text">AK — Portfolio</div>
+    <div class="nav-right">© 2026</div>
+  </nav>
+
+  <!-- Bottom -->
+  <div class="info-bottom" id="infoBottom">
+    <p class="tagline">Frontend Developer & BCA Student crafting immersive digital experiences.</p>
+    <button class="skip-btn" id="skipBtn">Skip Intro</button>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-line" id="progressLine"></div>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+
+    // Elements
+    const counter = document.getElementById('counter');
+    const counterWrap = document.getElementById('counterWrap');
+    const loader = document.getElementById('loader');
+    const progressLine = document.getElementById('progressLine');
+    const revealInner = document.getElementById('revealInner');
+    const revealWord = document.getElementById('revealWord');
+    const navTop = document.getElementById('navTop');
+    const infoBottom = document.getElementById('infoBottom');
+    const dotGrid = document.getElementById('dotGrid');
+    const bigInitials = document.getElementById('bigInitials');
+    const skipBtn = document.getElementById('skipBtn');
+
+    let count = 0;
+    let animationFrame;
+    let startTime = null;
+    const duration = 2800; // ms
+
+    function easeOut(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function animateCounter(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOut(progress);
+      const current = Math.floor(eased * 100);
+
+      if (current !== count) {
+        count = current;
+        counter.textContent = count < 10 ? '0' + count : count;
+        progressLine.style.width = count + '%';
+      }
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animateCounter);
+      } else {
+        counter.textContent = '100';
+        progressLine.style.width = '100%';
+        setTimeout(finishLoading, 300);
+      }
+    }
+
+    function finishLoading() {
+      // Fade out counter
+      counterWrap.style.opacity = '0';
+      counterWrap.style.transition = 'opacity 0.4s ease';
+
+      // Show dot grid + initials
+      dotGrid.classList.add('show');
+      bigInitials.classList.add('show');
+
+      // Show name reveal
+      setTimeout(() => {
+        revealInner.classList.add('up');
+      }, 200);
+
+      // Show nav + bottom
+      setTimeout(() => {
+        navTop.classList.add('visible');
+        infoBottom.classList.add('visible');
+      }, 400);
+
+      // After reveal, open curtains
+      setTimeout(() => {
+        revealInner.classList.remove('up');
+        revealInner.style.transform = 'translateY(-100%)';
+        revealInner.style.transition = 'transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)';
+      }, 1800);
+
+      setTimeout(() => {
+        loader.classList.add('open');
+        progressLine.style.opacity = '0';
+      }, 2200);
+
+      // Redirect
+      setTimeout(() => {
+        sessionStorage.setItem('splashPass', '1');
+        window.location.href = 'index.html';
+      }, 3400);
+    }
+
+    function skipLoading() {
+      cancelAnimationFrame(animationFrame);
+      progressLine.style.width = '100%';
+      counter.textContent = '100';
+      setTimeout(() => {
+        loader.classList.add('open');
+        setTimeout(() => {
+          sessionStorage.setItem('splashPass', '1');
+          window.location.href = 'index.html';
+        }, 600);
+      }, 200);
+    }
+
+    skipBtn.addEventListener('click', skipLoading);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') skipLoading(); });
+
+    // Start
+    setTimeout(() => {
+      requestAnimationFrame(animateCounter);
+    }, 400);
+  </script>
+</body>
+</html>
