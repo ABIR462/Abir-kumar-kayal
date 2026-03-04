@@ -985,7 +985,8 @@
     /* ─── RESPONSIVE ──────────────────────────── */
     @media (max-width: 900px) {
       .about-grid { grid-template-columns: 1fr; gap: 3rem; }
-      .skills-grid { grid-template-columns: 1fr 1fr; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .skill-card { min-height: auto; }
       .timeline-item { grid-template-columns: 1fr; gap: 0.5rem; }
     }
 
@@ -995,10 +996,16 @@
       .hero { padding: 0 1.5rem 4rem; }
       footer { padding: 1.5rem; }
       .skills-grid { grid-template-columns: 1fr; }
-      .skill-card { padding: 1.8rem 1.4rem; min-height: auto; }
+      .skill-card {
+        padding: 1.6rem 1.4rem;
+        min-height: auto;
+        border-radius: 18px;
+        background: linear-gradient(160deg, rgba(200,255,87,0.12), rgba(17,17,17,0) 60%), var(--black);
+        box-shadow: 0 14px 28px rgba(0,0,0,0.35);
+      }
       .skill-card:hover,
       .skill-card.active,
-      .skill-card:focus-within { transform: scale(1.02); }
+      .skill-card:focus-within { transform: none; }
       .skills-icon-row {
         flex-wrap: nowrap;
         overflow-x: auto;
@@ -1007,8 +1014,18 @@
         scroll-snap-type: x mandatory;
       }
       .float-icon-chip { scroll-snap-align: start; }
-      .skill-list-inner li { grid-template-columns: auto 1fr; }
-      .skill-li-right { grid-column: 1 / -1; grid-template-columns: auto 1fr; width: 100%; }
+      .skill-card-head { text-align: left; }
+      .skill-title { font-size: 1.2rem; }
+      .skill-sub { max-width: none; font-size: 0.86rem; }
+      .skill-list-inner li {
+        grid-template-columns: auto 1fr;
+        padding: 0.9rem 0;
+      }
+      .skill-li-right {
+        grid-column: 1 / -1;
+        grid-template-columns: auto 1fr;
+        width: 100%;
+      }
       .skill-bar-thin { width: 100%; }
       .nav-links { display: none; }
       .hamburger { display: flex; }
@@ -1104,6 +1121,16 @@
 
     .skill-list-inner li:last-child { border-bottom: none; }
     .skill-list-inner li:hover { color: var(--accent); }
+
+    .skill-list-inner li::after {
+      content: '';
+      grid-column: 1 / -1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(200,255,87,0.15), rgba(255,255,255,0.08));
+      opacity: 0.5;
+      margin-top: 0.8rem;
+    }
+    .skill-list-inner li:last-child::after { display: none; }
 
     .skill-name { font-weight: 600; }
 
