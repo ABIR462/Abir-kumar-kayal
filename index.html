@@ -110,16 +110,41 @@
     .nav-logo {
       display: inline-flex;
       align-items: center;
-      line-height: 0;
+      gap: 0.75rem;
+      line-height: 1;
       text-decoration: none;
+      color: var(--white);
+      transition: transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
     }
 
-    .nav-logo img {
-      height: 34px;
-      width: auto;
+    .nav-logo:hover {
+      transform: translateY(-1px);
+    }
+
+    .logo-mark {
+      width: 42px;
+      height: 42px;
       display: block;
-      object-fit: contain;
-      background: transparent;
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.45));
+    }
+
+    .logo-mark svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .logo-word {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+
+    .nav-logo:hover .logo-word {
+      color: var(--white);
     }
 
     .nav-links {
@@ -191,6 +216,112 @@
       padding-bottom: 5rem;
       position: relative;
       overflow: hidden;
+    }
+
+    .hero-laser-field {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hero-laser-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 1.25rem;
+      padding: 0.36rem 0.68rem;
+      border: 1px solid rgba(200,255,87,0.28);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: rgba(245,245,240,0.78);
+      background: rgba(10,10,10,0.45);
+      backdrop-filter: blur(8px);
+      width: fit-content;
+    }
+
+    .hero-laser-hint .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(200,255,87,0.7);
+    }
+
+    .laser-token {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.32rem 0.7rem 0.32rem 0.38rem;
+      border: 1px solid rgba(200,255,87,0.28);
+      border-radius: 999px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.01)),
+        linear-gradient(120deg, rgba(200,255,87,0.2), rgba(87,255,203,0.12));
+      box-shadow: 0 14px 32px rgba(0,0,0,0.38), 0 0 26px rgba(200,255,87,0.15), inset 0 1px 0 rgba(255,255,255,0.18);
+      transform: translate(-50%, -50%) scale(0.84);
+      opacity: 0;
+      animation: laser-pop 1.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+      will-change: transform, opacity;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .laser-token-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(8, 8, 8, 0.56);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.24);
+      flex-shrink: 0;
+    }
+
+    .laser-token-icon svg {
+      width: 12px;
+      height: 12px;
+      display: block;
+    }
+
+    .laser-token-line {
+      width: clamp(20px, 2.2vw, 34px);
+      height: 1px;
+      background: linear-gradient(90deg, rgba(87,255,203,0.1), rgba(200,255,87,0.95));
+      box-shadow: 0 0 8px rgba(200,255,87,0.35);
+    }
+
+    .laser-token-text {
+      font-family: var(--font-mono);
+      font-size: clamp(0.58rem, 0.74vw, 0.68rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    @keyframes laser-pop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.84) translateY(10px);
+      }
+      20% {
+        opacity: 1;
+      }
+      72% {
+        opacity: 0.92;
+        transform: translate(-50%, -50%) scale(1) translateY(-2px);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.05) translateY(-24px);
+      }
     }
 
     .hero-layout {
@@ -351,9 +482,6 @@
 
     .btn-ghost:hover { color: var(--white); }
 
-    100% { top: 100%; }
-    }
-
     /* ─── SECTION COMMON ──────────────────────── */
     .section {
       padding: 7rem 2.5rem;
@@ -479,7 +607,6 @@
       position: relative;
       overflow: hidden;
       transition: padding-left 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
-      group: true;
     }
 
     .project-item::before {
@@ -963,6 +1090,7 @@
       .skill-card { min-height: auto; }
       .timeline-item { grid-template-columns: 1fr; gap: 0.5rem; }
       .hero-layout { grid-template-columns: 1fr; }
+      .hero-laser-hint { margin-bottom: 1rem; }
       .hero-media {
         width: min(520px, 90vw);
         height: 45vh;
@@ -977,8 +1105,21 @@
       .section { padding: 5rem 1.5rem; }
       .hero { padding: 0 1.5rem 4rem; }
       footer { padding: 1.5rem; }
-      .nav-logo img { height: 28px; }
+      .logo-mark { width: 36px; height: 36px; }
+      .logo-word { font-size: 0.6rem; letter-spacing: 0.13em; }
       .hero-media { height: 40vh; }
+      .hero-laser-hint {
+        font-size: 0.53rem;
+        padding: 0.34rem 0.6rem;
+      }
+      .laser-token {
+        padding: 0.24rem 0.46rem 0.24rem 0.3rem;
+        gap: 0.3rem;
+      }
+      .laser-token-icon { width: 17px; height: 17px; }
+      .laser-token-icon svg { width: 10px; height: 10px; }
+      .laser-token-line { width: 18px; }
+      .laser-token-text { font-size: 0.54rem; }
       .skills-grid { grid-template-columns: 1fr; gap: 1.2rem; }
       .skill-card {
         width: 100%;
@@ -1018,8 +1159,18 @@
       .hamburger { display: flex; }
       .mobile-nav { padding: 1.5rem; }
       .project-tags { display: none; }
-      .contact-split { flex-direction: column !important; }
       .social-row { justify-content: flex-start !important; }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      body { cursor: auto; }
+      .cursor-dot,
+      .cursor-ring { display: none; }
+      .hamburger,
+      .mobile-nav-close,
+      .social-btn,
+      a,
+      button { cursor: pointer; }
     }
 
     /* SKILL ICONS */
@@ -1282,8 +1433,28 @@
 
   <!-- Nav -->
   <nav id="mainNav">
-    <a href="#" class="nav-logo">
-      <img src="server/Logo.png" alt="Abir logo">
+    <a href="#" class="nav-logo" aria-label="Abir home">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" role="img" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ringOuter" x1="12" y1="10" x2="52" y2="54" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#f5f5f0"/>
+              <stop offset="0.5" stop-color="#c8ff57"/>
+              <stop offset="1" stop-color="#57ffcb"/>
+            </linearGradient>
+            <radialGradient id="ringInner" cx="0.35" cy="0.3" r="0.8">
+              <stop offset="0" stop-color="#232323"/>
+              <stop offset="1" stop-color="#0a0a0a"/>
+            </radialGradient>
+          </defs>
+          <circle cx="32" cy="32" r="29" fill="url(#ringInner)"/>
+          <circle cx="32" cy="32" r="27.5" fill="none" stroke="url(#ringOuter)" stroke-width="2.4"/>
+          <ellipse cx="25" cy="21" rx="11" ry="6" fill="rgba(245,245,240,0.12)"/>
+          <circle cx="32" cy="32" r="21.5" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="0.8"/>
+          <text x="32" y="42" text-anchor="middle" font-family="Syne, sans-serif" font-size="31" font-weight="800" letter-spacing="-0.06em" fill="#c8ff57">A</text>
+        </svg>
+      </span>
+      <span class="logo-word">Abir</span>
     </a>
     <ul class="nav-links">
       <li><a href="#work">Work</a></li>
@@ -1299,17 +1470,20 @@
 
   <!-- ─── HERO ─────────────────────────────────── -->
     <section class="hero" id="home">
-    
+    <div class="hero-laser-field" id="heroLaserField" aria-hidden="true"></div>
     <div class="hero-layout">
       <div class="hero-content">
+        
+          
+        </div>
         <div class="hero-eyebrow">
          
           
         </div>
 
         <h1 class="hero-title">
-          <span class="line"><span class="line-inner">Abir</span></span>
-          <span class="line"><span class="line-inner">Kumar</span></span>
+          <span class="line"><span class="line-inner">Abir Kumar</span></span>
+
           <span class="line"><span class="line-inner accent">Kayal</span></span>
         </h1>
 
@@ -1942,6 +2116,83 @@
       el.addEventListener('mouseenter', () => ring.classList.add('hover'));
       el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
     });
+
+    // Hero laser words follow pointer movement inside hero area.
+    const hero = document.getElementById('home');
+    const heroLaserField = document.getElementById('heroLaserField');
+    const laserItems = [
+      { label: 'Python', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#3776AB" d="M11.97 2.02c-5.06 0-4.74 2.2-4.74 2.2v2.28h4.82v.69H5.3S2.02 6.8 2.02 12.02s2.85 5.03 2.85 5.03h1.7v-2.4s-.1-2.85 2.8-2.85h4.84s2.72.04 2.72-2.63V4.78s.42-2.76-4.96-2.76Z"/><circle cx="9.2" cy="4.6" r="1.1" fill="#fff"/><path fill="#FFD43B" d="M12.03 21.98c5.06 0 4.74-2.2 4.74-2.2V17.5h-4.82v-.69h6.75s3.28.4 3.28-4.83-2.85-5.03-2.85-5.03h-1.7v2.4s.1 2.85-2.8 2.85H9.79s-2.72-.04-2.72 2.63v4.39s-.42 2.76 4.96 2.76Z"/><circle cx="14.8" cy="19.4" r="1.1" fill="#fff"/></svg>' },
+      { label: 'Web Dev', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#61DAFB" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm6.88 9h-2.47a14.5 14.5 0 0 0-.92-4 8.03 8.03 0 0 1 3.39 4ZM12 4.05c.8 1.12 1.43 2.73 1.77 4.95h-3.54C10.57 6.78 11.2 5.17 12 4.05ZM4.73 13h2.55a14.95 14.95 0 0 0 .9 4.93A8.04 8.04 0 0 1 4.73 13Zm2.55-2H4.73a8.04 8.04 0 0 1 3.45-4.93 14.95 14.95 0 0 0-.9 4.93Zm2.02 0c.35-2.43 1.1-4.18 2-5.36.9 1.18 1.65 2.93 2 5.36Zm4 2c-.35 2.43-1.1 4.18-2 5.36-.9-1.18-1.65-2.93-2-5.36Zm2.19 4.93a14.5 14.5 0 0 0 .92-4h2.47a8.03 8.03 0 0 1-3.39 4Z"/></svg>' },
+      { label: 'React', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="1.8" fill="#61DAFB"/><g fill="none" stroke="#61DAFB" stroke-width="1.5"><ellipse cx="12" cy="12" rx="8.8" ry="3.8"/><ellipse cx="12" cy="12" rx="8.8" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="8.8" ry="3.8" transform="rotate(120 12 12)"/></g></svg>' },
+      { label: 'JavaScript', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="4" fill="#F7DF1E"/><path fill="#101010" d="M12.1 18.3c.5.8 1.1 1.3 2.2 1.3.9 0 1.5-.4 1.5-1 0-.7-.5-.9-1.6-1.4l-.6-.3c-1.7-.7-2.8-1.5-2.8-3.2 0-1.6 1.2-2.8 3.1-2.8 1.3 0 2.3.5 3 1.6l-1.6 1c-.4-.7-.8-.9-1.4-.9-.6 0-1 .3-1 .9 0 .6.4.8 1.2 1.1l.6.3c2 .8 3.1 1.6 3.1 3.4 0 1.9-1.5 3-3.5 3-1.9 0-3.1-.9-3.7-2.1Zm-7.2.2c.4.8 1 .9 1.4.9.6 0 1-.2 1-.9V11h2.2v7.5c0 2.3-1.4 3.3-3.3 3.3-1.8 0-2.8-.9-3.3-2.1Z"/></svg>' },
+      { label: 'HTML5', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#E34F26" d="m4 3 1.5 17L12 22l6.5-2L20 3H4Z"/><path fill="#EF652A" d="M12 20.5 17.2 19 18.5 4.5H12v16Z"/><path fill="#fff" d="M12 10.6H8.6l-.2-2.1H12V6.4H6l.6 6.3H12v-2.1Zm0 5.5-.1.1-2.2-.6-.1-1.6H7.6l.2 3.2 4.2 1.2V16.1Zm0-3.4v2.1h3.1l-.3 2.8-2.8.8v2.2l4.4-1.2.8-8.5H12Z"/></svg>' },
+      { label: 'CSS3', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#1572B6" d="m4 3 1.5 17L12 22l6.5-2L20 3H4Z"/><path fill="#33A9DC" d="M12 20.5 17.2 19 18.5 4.5H12v16Z"/><path fill="#fff" d="M12 10.6H8.7l-.2-2H12V6.4H6.2l.6 6.2H12v-2Zm0 5.4-.1.1-2.1-.6-.1-1.6H7.8l.2 3.2 4 1.1v-2.2Zm3.1-5.4.3-2H12V6.4h5.7l-.1.6-.5 5.6H12v-2h3.1Zm-.2 3.2-.2 3.1-2.8.8v-2.2l1.2-.3.1-1.4h1.7Z"/></svg>' },
+      { label: 'Node.js', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#5FA04E" d="M12 2 3.8 6.7v10.6L12 22l8.2-4.7V6.7L12 2Z"/><path fill="#fff" d="M12 6.2c-3.2 0-5.6 2.2-5.6 5.3 0 2.8 1.7 4.8 4.2 5.2v-2.3c-1.3-.3-2.2-1.4-2.2-2.9 0-1.8 1.3-3.1 3.1-3.1s3.1 1.4 3.1 3.2c0 1.3-.7 2.4-1.8 2.8v-2.9h-2.1v7.2h2.1v-1.2c2.2-.5 3.9-2.6 3.9-5.1 0-3.1-2.4-5.2-5.6-5.2Z"/></svg>' },
+      { label: 'API', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#57FFCB" d="M12 2 3 7v10l9 5 9-5V7l-9-5Zm0 2.2L18.6 8 12 11.8 5.4 8 12 4.2Zm-7 5.5 6 3.5v6.6l-6-3.3V9.7Zm14 0v6.8l-6 3.3v-6.6l6-3.5Z"/></svg>' },
+      { label: 'Git', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#F05032" d="M22 11.7 12.3 2a1 1 0 0 0-1.4 0L9 3.9l2.4 2.4a1.7 1.7 0 0 1 2.1 2.1l2.3 2.3a1.7 1.7 0 1 1-1.1 1.1l-2.1-2.1v5.4a1.7 1.7 0 1 1-1.2 0V9.7a1.7 1.7 0 0 1-.9-2.2L8.2 5.2 2 11.4a1 1 0 0 0 0 1.4l9.7 9.7a1 1 0 0 0 1.4 0l8.9-8.9a1 1 0 0 0 0-1.4Z"/></svg>' }
+    ];
+    let laserIndex = 0;
+    let lastLaserTime = 0;
+    let lastLaserX = 0;
+    let lastLaserY = 0;
+    const isCoarsePointer = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    const laserHint = document.querySelector('.hero-laser-hint');
+
+    if (isCoarsePointer && laserHint) {
+      laserHint.innerHTML = '<span class="dot"></span>Swipe to paint skills';
+    }
+
+    function spawnLaserToken(clientX, clientY) {
+      if (!hero || !heroLaserField) return;
+      const rect = hero.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+
+      if (x < 0 || x > rect.width || y < 0 || y > rect.height) return;
+
+      const token = document.createElement('span');
+      token.className = 'laser-token';
+      token.style.left = `${x}px`;
+      token.style.top = `${y}px`;
+
+      const line = document.createElement('span');
+      line.className = 'laser-token-line';
+
+      const item = laserItems[laserIndex];
+
+      const icon = document.createElement('span');
+      icon.className = 'laser-token-icon';
+      icon.innerHTML = item.icon;
+
+      const text = document.createElement('span');
+      text.className = 'laser-token-text';
+      text.textContent = item.label;
+
+      token.append(icon, line, text);
+      heroLaserField.appendChild(token);
+
+      laserIndex = (laserIndex + 1) % laserItems.length;
+      setTimeout(() => token.remove(), 1500);
+    }
+
+    function handleLaserMove(clientX, clientY) {
+      const now = performance.now();
+      const distance = Math.hypot(clientX - lastLaserX, clientY - lastLaserY);
+      if (now - lastLaserTime < 85 || distance < 18) return;
+      lastLaserTime = now;
+      lastLaserX = clientX;
+      lastLaserY = clientY;
+      spawnLaserToken(clientX, clientY);
+    }
+
+    if (hero) {
+      hero.addEventListener('mousemove', e => handleLaserMove(e.clientX, e.clientY));
+      hero.addEventListener('touchmove', e => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        handleLaserMove(touch.clientX, touch.clientY);
+      }, { passive: true });
+    }
 
     // ─── NAV SCROLL ───────────────────────────────────
     const nav = document.getElementById('mainNav');
