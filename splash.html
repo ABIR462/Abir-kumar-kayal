@@ -320,7 +320,7 @@
     let count = 0;
     let animationFrame;
     let startTime = null;
-    const duration = 2800; // ms
+    const duration = 2200; // ms (total splash ~5s)
 
     function easeOut(t) {
       return 1 - Math.pow(1 - t, 3);
@@ -373,18 +373,18 @@
         revealInner.classList.remove('up');
         revealInner.style.transform = 'translateY(-100%)';
         revealInner.style.transition = 'transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)';
-      }, 1800);
+      }, 1200);
 
       setTimeout(() => {
         loader.classList.add('open');
         progressLine.style.opacity = '0';
-      }, 2200);
+      }, 1500);
 
       // Redirect
       setTimeout(() => {
         sessionStorage.setItem('splashPass', '1');
         window.location.href = 'index.html';
-      }, 3400);
+      }, 2100);
     }
 
     function skipLoading() {
