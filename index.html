@@ -6,16 +6,21 @@
   <title>Abir Kumar Kayal — Frontend Developer</title>
   <meta name="description" content="Frontend Developer & BCA Student crafting immersive digital experiences">
   <script>
-    // Always route through splash on every load (including refresh).
-    if (!sessionStorage.getItem('splashPass')) {
-      sessionStorage.setItem('splashPass', '1');
-      window.location.replace('splash.html');
-    } else {
-      sessionStorage.removeItem('splashPass');
+    const params = new URLSearchParams(window.location.search);
+    window.__EMBED_MODE__ = params.get('embed') === '1';
+
+    // Always route through splash on every load (including refresh), except embed mode.
+    if (!window.__EMBED_MODE__) {
+      if (!sessionStorage.getItem('splashPass')) {
+        sessionStorage.setItem('splashPass', '1');
+        window.location.replace('splash.html');
+      } else {
+        sessionStorage.removeItem('splashPass');
+      }
     }
   </script>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,6 +36,7 @@
       --border: rgba(255,255,255,0.08);
       --font-head: 'Syne', sans-serif;
       --font-mono: 'Syne Mono', monospace;
+      --font-funk: 'Bungee', cursive;
     }
 
     html {
@@ -45,6 +51,10 @@
       font-family: var(--font-head);
       overflow-x: hidden;
       cursor: none;
+    }
+
+    body.embed-mode {
+      cursor: auto;
     }
 
     /* ─── CURSOR ─────────────────────────────── */
@@ -92,18 +102,21 @@
     /* ─── NAV ─────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0;
-      padding: 1.75rem 2.5rem;
+      padding: 1.1rem 2.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 1000;
       border-bottom: 1px solid transparent;
-      transition: border-color 0.4s, background 0.4s;
+      background: linear-gradient(180deg, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.08) 100%);
+      transition: border-color 0.4s, background 0.4s, padding 0.4s;
     }
 
     nav.scrolled {
       border-color: var(--border);
-      background: rgba(10,10,10,0.85);
+      background: rgba(10,10,10,0.88);
+      padding-top: 0.85rem;
+      padding-bottom: 0.85rem;
       backdrop-filter: blur(20px);
     }
 
@@ -150,7 +163,7 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 2.5rem;
+      gap: 2rem;
       list-style: none;
     }
 
@@ -208,22 +221,49 @@
 
     /* ─── HERO ────────────────────────────────── */
     .hero {
-      min-height: 100svh;
-      padding: 0 2.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding-bottom: 5rem;
+      min-height: 180svh;
+      padding: 7rem 2.5rem 6rem;
       position: relative;
       overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-water-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -20% -8% auto;
+      height: 84%;
+      background:
+        radial-gradient(60% 52% at 50% 14%, rgba(200,255,87,0.14), rgba(10,10,10,0) 72%),
+        radial-gradient(40% 34% at 16% 26%, rgba(87,255,203,0.1), rgba(10,10,10,0) 75%);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 38px 38px;
+      opacity: 0.08;
+      z-index: -1;
+      pointer-events: none;
+      mask-image: radial-gradient(80% 50% at 50% 30%, #000 45%, transparent 100%);
     }
 
     .hero-laser-field {
-      position: absolute;
-      inset: 0;
-      z-index: 3;
-      pointer-events: none;
-      overflow: hidden;
+      display: none;
     }
 
     .hero-laser-hint {
@@ -325,24 +365,71 @@
     }
 
     .hero-layout {
+      width: min(1240px, 100%);
+      margin: 0 auto;
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
-      align-items: end;
-      gap: 2.5rem;
-      position: relative;
+      grid-template-columns: 1fr;
+      justify-items: center;
+      align-content: start;
+      gap: 2.8rem;
+      position: sticky;
+      top: 5.5rem;
       z-index: 2;
     }
 
     .hero-media {
-      width: min(520px, 40vw);
-      height: min(520px, 55vh);
-      justify-self: end;
-      align-self: end;
+      --open-progress: 0;
+      --scale-progress: 0;
+      --float: 0;
+      width: min(1060px, 92vw);
+      justify-self: center;
+      align-self: start;
       pointer-events: none;
+      position: relative;
+      perspective: 2200px;
+      transform-origin: center center;
+      transform: translateY(calc((1 - var(--scale-progress)) * 34px - (var(--float) * 6px)))
+        scale(calc(0.86 + (var(--scale-progress) * 0.23)));
+      transition: transform 50ms linear;
+      z-index: 2;
     }
 
-    .hero-media model-viewer,
-    .hero-media img {
+    .hero-side-copy {
+      position: absolute;
+      right: clamp(-6.8rem, -7vw, -3.4rem);
+      top: 30%;
+      display: grid;
+      gap: 0.4rem;
+      text-align: left;
+      transform: rotate(-4deg);
+      z-index: 3;
+      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.4));
+    }
+
+    .hero-side-copy .lead {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(245,245,240,0.74);
+      padding-left: 0.2rem;
+    }
+
+    .hero-side-copy .name {
+      font-family: var(--font-funk);
+      font-size: clamp(1.3rem, 2.2vw, 2rem);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      color: #0f0f12;
+      padding: 0.6rem 0.8rem 0.45rem;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #d6ff6f 0%, #74ffd7 55%, #9ee8ff 100%);
+      border: 1px solid rgba(255,255,255,0.45);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.34);
+      white-space: nowrap;
+    }
+
+    .hero-media model-viewer {
       width: 100%;
       height: 100%;
       display: block;
@@ -351,31 +438,178 @@
     }
 
     .hero-media model-viewer { display: none; }
-    .hero-gif { display: block; }
+    .hero-gif { display: none; }
 
-    .hero-top-line {
+    .macbook-shell {
+      width: 100%;
+      max-width: 1060px;
+      margin: 0 auto;
+      position: relative;
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 35px 70px rgba(0, 0, 0, 0.58));
+    }
+
+    .macbook-shell::after {
+      content: "";
       position: absolute;
-      top: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--muted);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      left: 10%;
+      right: 10%;
+      bottom: -8%;
+      height: 28%;
+      border-radius: 50%;
+      background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,0.62), rgba(0,0,0,0));
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .macbook-lid-wrap {
+      position: relative;
+      width: 100%;
+      height: clamp(260px, 32vw, 520px);
+      transform-style: preserve-3d;
       z-index: 2;
+    }
+
+    .macbook-lid {
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      padding: 12px;
+      background: linear-gradient(180deg, #141418 0%, #09090b 90%);
+      transform-origin: bottom center;
+      transform-style: preserve-3d;
+      transform: perspective(2200px) rotateX(calc(-92deg + (var(--open-progress) * 92deg)));
+      transition: transform 140ms cubic-bezier(0.22, 0.61, 0.36, 1);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.08),
+        inset 0 -18px 40px rgba(0,0,0,0.32);
+    }
+
+    .macbook-screen-frame {
+      height: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0d0d10;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 0 90px rgba(87,255,203,0.09) inset;
+      position: relative;
+    }
+
+    .macbook-screen-frame .macbook-screen-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: saturate(1.06) contrast(1.02);
+      transform: translateY(calc((1 - var(--open-progress)) * -2.5%))
+        scale(calc(1.03 + (1 - var(--open-progress)) * 0.05));
+      transform-origin: center top;
+    }
+
+    .macbook-screen-frame .macbook-screen-doc {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      transform: none;
+      filter: contrast(1.03) saturate(1.02);
+      background: #0f1013;
+    }
+
+    .macbook-base {
+      margin-top: -3px;
+      height: clamp(180px, 14.5vw, 245px);
+      width: 100%;
+      border-radius: 0 0 22px 22px;
+      background: linear-gradient(180deg, #3d3e43 0%, #232429 70%, #16171b 100%);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-top-color: rgba(255,255,255,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .macbook-base::before {
+      content: "";
+      position: absolute;
+      inset: 14px 10% auto;
+      height: 10px;
+      border-radius: 0 0 10px 10px;
+      background: linear-gradient(180deg, #17181b, #0b0c0f);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.14) inset;
+    }
+
+    .macbook-base::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 120px;
+      height: 9px;
+      transform: translateX(-50%);
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.26), rgba(255,255,255,0.05));
+      opacity: 0.55;
+    }
+
+    .macbook-speaker {
+      position: absolute;
+      top: 34px;
+      width: 9%;
+      height: 98px;
+      border-radius: 8px;
+      background-image: radial-gradient(circle, rgba(0,0,0,0.86) 1.2px, transparent 1.35px);
+      background-size: 7px 7px;
+      opacity: 0.7;
+    }
+
+    .macbook-speaker.left { left: 3.8%; }
+    .macbook-speaker.right { right: 3.8%; }
+
+    .macbook-trackpad {
+      width: 33%;
+      height: 62px;
+      margin: 70px auto 0;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: inset 0 0 14px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .macbook-notch {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 16%;
+      height: 10px;
+      border-radius: 0 0 10px 10px;
+      background: #030303;
+      z-index: 3;
     }
 
     .hero-content {
       position: relative;
-      z-index: 2;
+      z-index: 5;
+      max-width: 780px;
+      text-align: center;
+      margin-top: 0.6rem;
     }
 
     .hero-eyebrow {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
+      gap: 0.65rem;
+      margin-bottom: 1.1rem;
+      width: fit-content;
+      padding: 0.38rem 0.7rem;
+      border: 1px solid rgba(200,255,87,0.22);
+      border-radius: 999px;
+      background: rgba(14,14,14,0.5);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.26);
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .hero-eyebrow-dot {
@@ -392,18 +626,19 @@
 
     .hero-eyebrow-text {
       font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
+      font-size: 0.64rem;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--muted);
+      color: rgba(245,245,240,0.85);
     }
 
     .hero-title {
-      font-size: clamp(2.8rem, 7.5vw, 7rem);
+      font-size: clamp(2.9rem, 6.6vw, 6.2rem);
       font-weight: 800;
-      line-height: 0.92;
+      line-height: 0.93;
       letter-spacing: -0.04em;
-      margin-bottom: 3rem;
+      margin-bottom: 1.2rem;
+      text-wrap: balance;
     }
 
     .hero-title .line {
@@ -413,7 +648,8 @@
 
     .hero-title .line-inner {
       display: block;
-      transform: translateY(100%);
+      transform: translateY(0);
+      opacity: 1;
       animation: slide-up 0.9s cubic-bezier(0.76, 0, 0.24, 1) forwards;
     }
 
@@ -422,30 +658,61 @@
     .hero-title .line:nth-child(3) .line-inner { animation-delay: 0.34s; }
 
     @keyframes slide-up {
-      to { transform: translateY(0); }
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
 
-    .hero-title .accent { color: var(--accent); }
+    .hero-title .accent { color: #eaffef; }
+    .hero-title .hero-name {
+      display: inline-block;
+      color: #eaffef;
+      text-shadow: 0 8px 30px rgba(95, 255, 183, 0.28), 0 2px 12px rgba(255,255,255,0.12);
+    }
+
+    @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+      .hero-title .hero-name {
+        background-image: linear-gradient(100deg, #f6fff8 0%, #d2ffe2 18%, #89ffbf 40%, #f3fff8 62%, #8bffc7 78%, #ffffff 100%);
+        background-size: 280% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        animation: hero-gradient-flow 4.8s ease-in-out infinite;
+      }
+    }
+
+    @keyframes hero-gradient-flow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
     .hero-bottom {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 2rem;
-      flex-wrap: wrap;
+      display: grid;
+      gap: 1.1rem;
+      justify-items: center;
     }
 
     .hero-desc {
-      font-size: clamp(0.78rem, 1.2vw, 0.95rem);
-      color: var(--muted);
-      max-width: 360px;
-      line-height: 1.7;
+      font-size: clamp(0.9rem, 1.25vw, 1.03rem);
+      color: rgba(245,245,240,0.76);
+      max-width: 640px;
+      line-height: 1.65;
     }
 
     .hero-actions {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
+      justify-content: center;
+      gap: 0.9rem;
+      margin-top: 0.1rem;
+      flex-wrap: wrap;
     }
 
     .btn-primary {
@@ -482,13 +749,34 @@
 
     .btn-ghost:hover { color: var(--white); }
 
+    .hero-scroll-cue {
+      margin-top: 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(245,245,240,0.5);
+    }
+
     /* ─── SECTION COMMON ──────────────────────── */
     .section {
       padding: 7rem 2.5rem;
       position: relative;
+      isolation: isolate;
       opacity: 0;
       transform: translateY(40px);
       transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: 1.2rem 1rem;
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(170deg, rgba(255,255,255,0.03), rgba(255,255,255,0) 35%);
+      z-index: -1;
+      pointer-events: none;
     }
 
     .section.visible { opacity: 1; transform: translateY(0); }
@@ -528,7 +816,7 @@
       padding: 1.2rem 0;
       overflow: hidden;
       white-space: nowrap;
-      background: var(--black2);
+      background: linear-gradient(180deg, rgba(17,17,17,0.96), rgba(15,15,15,0.88));
     }
 
     .marquee-track {
@@ -1085,33 +1373,56 @@
     }
     /* RESPONSIVE */
     @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: inline-flex; }
       .about-grid { grid-template-columns: 1fr; gap: 3rem; }
       .skills-grid { grid-template-columns: 1fr; }
       .skill-card { min-height: auto; }
       .timeline-item { grid-template-columns: 1fr; gap: 0.5rem; }
-      .hero-layout { grid-template-columns: 1fr; }
-      .hero-laser-hint { margin-bottom: 1rem; }
+      .hero-layout { position: sticky; top: 5.1rem; }
+      .hero { min-height: 150svh; padding-top: 6.5rem; }
+      .hero-content { max-width: none; }
       .hero-media {
-        width: min(520px, 90vw);
-        height: 45vh;
+        width: min(920px, 96vw);
         justify-self: center;
       }
+      .hero-side-copy {
+        right: 0;
+        top: auto;
+        bottom: -2.9rem;
+        transform: rotate(0deg);
+        justify-items: center;
+        text-align: center;
+        width: 100%;
+      }
       .hero-media model-viewer { display: none; }
-      .hero-gif { display: block; }
+      .hero-gif { display: none; }
+      .section::before { inset: 0.9rem 0.6rem; border-radius: 18px; }
     }
 
     @media (max-width: 640px) {
       nav { padding: 1.5rem 1.5rem; }
       .section { padding: 5rem 1.5rem; }
-      .hero { padding: 0 1.5rem 4rem; }
+      .hero { padding: 6rem 1.5rem 4rem; min-height: auto; }
+      .hero-layout { position: static; gap: 1.7rem; }
       footer { padding: 1.5rem; }
       .logo-mark { width: 36px; height: 36px; }
       .logo-word { font-size: 0.6rem; letter-spacing: 0.13em; }
-      .hero-media { height: 40vh; }
-      .hero-laser-hint {
-        font-size: 0.53rem;
-        padding: 0.34rem 0.6rem;
+      .hero-media {
+        width: min(720px, 96vw);
+        transform: none;
       }
+      .hero-side-copy {
+        position: static;
+        margin-top: 0.6rem;
+      }
+      .hero-side-copy .name {
+        font-size: clamp(1rem, 6vw, 1.25rem);
+        padding: 0.5rem 0.65rem 0.38rem;
+      }
+      .hero-title { font-size: clamp(2.35rem, 12vw, 3.35rem); margin-bottom: 1rem; }
+      .hero-desc { font-size: 0.9rem; }
+      .hero-content { margin-top: 0; }
       .laser-token {
         padding: 0.24rem 0.46rem 0.24rem 0.3rem;
         gap: 0.3rem;
@@ -1400,10 +1711,23 @@
       margin-bottom: 2.2rem;
     }
 
+    body.embed-mode .hero-laser-field,
+    body.embed-mode .hero-water-canvas,
+    body.embed-mode .cursor-dot,
+    body.embed-mode .cursor-ring,
+    body.embed-mode .grain {
+      display: none !important;
+    }
+
 
   </style>
 </head>
 <body>
+  <script>
+    if (window.__EMBED_MODE__) {
+      document.body.classList.add('embed-mode');
+    }
+  </script>
 
   <!-- Cursor -->
   <div class="cursor-dot" id="cursorDot"></div>
@@ -1470,26 +1794,22 @@
 
   <!-- ─── HERO ─────────────────────────────────── -->
     <section class="hero" id="home">
+    <canvas class="hero-water-canvas" id="heroWaterCanvas" aria-hidden="true"></canvas>
     <div class="hero-laser-field" id="heroLaserField" aria-hidden="true"></div>
     <div class="hero-layout">
       <div class="hero-content">
-        
-          
-        </div>
         <div class="hero-eyebrow">
-         
-          
+          <span class="hero-eyebrow-dot"></span>
+          <span class="hero-eyebrow-text">Available for Selected Projects</span>
         </div>
 
         <h1 class="hero-title">
-          <span class="line"><span class="line-inner">Abir Kumar</span></span>
-
-          <span class="line"><span class="line-inner accent">Kayal</span></span>
+          <span class="line"><span class="line-inner accent hero-name">ABIR KUMAR KAYAL</span></span>
         </h1>
 
         <div class="hero-bottom">
           <p class="hero-desc">
-            Frontend Developer & BCA Student crafting immersive digital experiences with cutting-edge technologies.
+            Crafting high-impact portfolio websites and product UIs with clean frontend architecture, strong performance, and polished interactions.
           </p>
           <div class="hero-actions">
             <a href="#work" class="btn-primary">
@@ -1500,13 +1820,35 @@
             </a>
           </div>
         </div>
+        <div class="hero-scroll-cue">Scroll to open the device</div>
       </div>
 
-      <div class="hero-media" aria-hidden="true">
-        <model-viewer src="computer.glb" alt="3D computer"
-          auto-rotate interaction-prompt="none" environment-image="neutral"
-          shadow-intensity="0.6" exposure="1"></model-viewer>
-        <img class="hero-gif" src="server/Copilot3D-32242545-0f31-4b3d-9711-397f969345ae.gif" alt="" loading="eager">
+      <div class="hero-media">
+        <div class="macbook-shell" id="macbookShell">
+          <div class="macbook-lid-wrap">
+            <div class="macbook-lid">
+              <div class="macbook-notch"></div>
+              <div class="macbook-screen-frame">
+                <iframe
+                  class="macbook-screen-doc"
+                  id="macbookPdf"
+                  src="server/Abir%20new.pdf#toolbar=0&navpanes=0&scrollbar=0&zoom=42"
+                  title="Abir PDF preview"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+          <div class="macbook-base" aria-hidden="true">
+            <div class="macbook-speaker left"></div>
+            <div class="macbook-speaker right"></div>
+            <div class="macbook-trackpad"></div>
+          </div>
+        </div>
+        <div class="hero-side-copy" aria-hidden="true">
+          <span class="lead">HEY I AM</span>
+          <span class="name">ABIR</span>
+          <span class="lead">ABIR KUMAR KAYAL</span>
+        </div>
       </div>
     </div>
   </section>
@@ -2120,6 +2462,139 @@
     // Hero laser words follow pointer movement inside hero area.
     const hero = document.getElementById('home');
     const heroLaserField = document.getElementById('heroLaserField');
+    const heroWaterCanvas = document.getElementById('heroWaterCanvas');
+
+    function initHeroWaterWebGL() {
+      if (!heroWaterCanvas || window.__EMBED_MODE__) return;
+      const gl = heroWaterCanvas.getContext('webgl', {
+        alpha: true,
+        antialias: true,
+        premultipliedAlpha: true,
+      });
+      if (!gl) return;
+
+      const vertexSrc = `
+        attribute vec2 a_pos;
+        varying vec2 v_uv;
+        void main() {
+          v_uv = (a_pos + 1.0) * 0.5;
+          gl_Position = vec4(a_pos, 0.0, 1.0);
+        }
+      `;
+
+      const fragmentSrc = `
+        precision mediump float;
+        varying vec2 v_uv;
+        uniform vec2 u_res;
+        uniform float u_time;
+
+        float hash(vec2 p) {
+          return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+        }
+
+        float noise(vec2 p) {
+          vec2 i = floor(p);
+          vec2 f = fract(p);
+          vec2 u = f * f * (3.0 - 2.0 * f);
+          return mix(
+            mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+            mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+            u.y
+          );
+        }
+
+        float fbm(vec2 p) {
+          float v = 0.0;
+          float a = 0.5;
+          for (int i = 0; i < 5; i++) {
+            v += a * noise(p);
+            p *= 2.0;
+            a *= 0.5;
+          }
+          return v;
+        }
+
+        void main() {
+          vec2 uv = v_uv;
+          vec2 p = (uv - 0.5) * vec2(u_res.x / u_res.y, 1.0);
+          float t = u_time * 0.24;
+
+          float wave1 = sin((p.x * 7.0) + t * 2.4 + sin(p.y * 5.0)) * 0.07;
+          float wave2 = sin((p.y * 9.0) - t * 2.0 + cos(p.x * 4.0)) * 0.06;
+          float fluid = fbm(p * 2.2 + vec2(t * 0.7, -t * 0.6));
+          float mixWave = fluid + wave1 + wave2;
+
+          vec3 deep = vec3(0.03, 0.08, 0.06);
+          vec3 green = vec3(0.34, 0.95, 0.66);
+          vec3 white = vec3(0.96, 1.0, 0.97);
+
+          float glow = smoothstep(0.36, 0.9, mixWave);
+          float highlight = smoothstep(0.62, 1.15, mixWave + wave1 * 0.9);
+          vec3 col = mix(deep, green, glow);
+          col = mix(col, white, highlight * 0.56);
+
+          float vignette = smoothstep(1.22, 0.15, length(p * 0.92));
+          col *= vignette;
+          gl_FragColor = vec4(col, 0.82);
+        }
+      `;
+
+      function compile(type, src) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, src);
+        gl.compileShader(shader);
+        return shader;
+      }
+
+      const vs = compile(gl.VERTEX_SHADER, vertexSrc);
+      const fs = compile(gl.FRAGMENT_SHADER, fragmentSrc);
+      const program = gl.createProgram();
+      gl.attachShader(program, vs);
+      gl.attachShader(program, fs);
+      gl.linkProgram(program);
+      gl.useProgram(program);
+
+      const verts = new Float32Array([
+        -1, -1, 1, -1, -1, 1,
+        -1, 1, 1, -1, 1, 1,
+      ]);
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
+
+      const pos = gl.getAttribLocation(program, "a_pos");
+      gl.enableVertexAttribArray(pos);
+      gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+
+      const uRes = gl.getUniformLocation(program, "u_res");
+      const uTime = gl.getUniformLocation(program, "u_time");
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const w = Math.max(Math.floor(heroWaterCanvas.clientWidth * dpr), 1);
+        const h = Math.max(Math.floor(heroWaterCanvas.clientHeight * dpr), 1);
+        if (heroWaterCanvas.width !== w || heroWaterCanvas.height !== h) {
+          heroWaterCanvas.width = w;
+          heroWaterCanvas.height = h;
+        }
+        gl.viewport(0, 0, heroWaterCanvas.width, heroWaterCanvas.height);
+      }
+
+      function render(ts) {
+        resize();
+        gl.uniform2f(uRes, heroWaterCanvas.width, heroWaterCanvas.height);
+        gl.uniform1f(uTime, ts * 0.001);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        requestAnimationFrame(render);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      requestAnimationFrame(render);
+    }
+
+    initHeroWaterWebGL();
+
     const laserItems = [
       { label: 'Python', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#3776AB" d="M11.97 2.02c-5.06 0-4.74 2.2-4.74 2.2v2.28h4.82v.69H5.3S2.02 6.8 2.02 12.02s2.85 5.03 2.85 5.03h1.7v-2.4s-.1-2.85 2.8-2.85h4.84s2.72.04 2.72-2.63V4.78s.42-2.76-4.96-2.76Z"/><circle cx="9.2" cy="4.6" r="1.1" fill="#fff"/><path fill="#FFD43B" d="M12.03 21.98c5.06 0 4.74-2.2 4.74-2.2V17.5h-4.82v-.69h6.75s3.28.4 3.28-4.83-2.85-5.03-2.85-5.03h-1.7v2.4s.1 2.85-2.8 2.85H9.79s-2.72-.04-2.72 2.63v4.39s-.42 2.76 4.96 2.76Z"/><circle cx="14.8" cy="19.4" r="1.1" fill="#fff"/></svg>' },
       { label: 'Web Dev', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#61DAFB" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm6.88 9h-2.47a14.5 14.5 0 0 0-.92-4 8.03 8.03 0 0 1 3.39 4ZM12 4.05c.8 1.12 1.43 2.73 1.77 4.95h-3.54C10.57 6.78 11.2 5.17 12 4.05ZM4.73 13h2.55a14.95 14.95 0 0 0 .9 4.93A8.04 8.04 0 0 1 4.73 13Zm2.55-2H4.73a8.04 8.04 0 0 1 3.45-4.93 14.95 14.95 0 0 0-.9 4.93Zm2.02 0c.35-2.43 1.1-4.18 2-5.36.9 1.18 1.65 2.93 2 5.36Zm4 2c-.35 2.43-1.1 4.18-2 5.36-.9-1.18-1.65-2.93-2-5.36Zm2.19 4.93a14.5 14.5 0 0 0 .92-4h2.47a8.03 8.03 0 0 1-3.39 4Z"/></svg>' },
@@ -2194,6 +2669,42 @@
       }, { passive: true });
     }
 
+    // Macbook scroll integration: smooth open and scale while hero is in view.
+    const macbookMedia = document.querySelector('.hero-media');
+    let targetOpenProgress = 0;
+    let targetScaleProgress = 0;
+    let currentOpenProgress = 0;
+    let currentScaleProgress = 0;
+    let floatPhase = 0;
+
+    function updateMacbookProgress() {
+      if (!hero || !macbookMedia || window.__EMBED_MODE__) return;
+      const rect = hero.getBoundingClientRect();
+      const travel = Math.max(hero.offsetHeight - window.innerHeight * 0.72, 1);
+      const raw = (-rect.top + window.innerHeight * 0.08) / travel;
+      const progress = Math.min(Math.max(raw, 0), 1);
+      targetOpenProgress = Math.min(Math.max((progress - 0.02) / 0.5, 0), 1);
+      targetScaleProgress = Math.min(Math.max((progress - 0.03) / 0.66, 0), 1);
+    }
+
+    function animateMacbook() {
+      if (macbookMedia && !window.__EMBED_MODE__) {
+        floatPhase += 0.015;
+        currentOpenProgress += (targetOpenProgress - currentOpenProgress) * 0.12;
+        currentScaleProgress += (targetScaleProgress - currentScaleProgress) * 0.08;
+        const floatValue = (Math.sin(floatPhase) + 1) / 2;
+        macbookMedia.style.setProperty('--open-progress', currentOpenProgress.toFixed(4));
+        macbookMedia.style.setProperty('--scale-progress', currentScaleProgress.toFixed(4));
+        macbookMedia.style.setProperty('--float', floatValue.toFixed(4));
+      }
+      requestAnimationFrame(animateMacbook);
+    }
+
+    updateMacbookProgress();
+    window.addEventListener('scroll', updateMacbookProgress, { passive: true });
+    window.addEventListener('resize', updateMacbookProgress);
+    animateMacbook();
+
     // ─── NAV SCROLL ───────────────────────────────────
     const nav = document.getElementById('mainNav');
 
@@ -2214,7 +2725,13 @@
     // ─── SMOOTH SCROLL ───────────────────────────────
     document.querySelectorAll('a[href^="#"]').forEach(a => {
       a.addEventListener('click', e => {
-        const target = document.querySelector(a.getAttribute('href'));
+        const href = a.getAttribute('href');
+        if (!href || href === '#') {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        const target = document.querySelector(href);
         if (!target) return;
         e.preventDefault();
         const offset = nav.offsetHeight + 20;
