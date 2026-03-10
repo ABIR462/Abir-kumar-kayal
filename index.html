@@ -514,6 +514,8 @@
       height: 100%;
       border: 0;
       display: block;
+      object-fit: cover;
+      object-position: center top;
       transform: none;
       filter: contrast(1.03) saturate(1.02);
       background: #0f1013;
@@ -1829,12 +1831,16 @@
             <div class="macbook-lid">
               <div class="macbook-notch"></div>
               <div class="macbook-screen-frame">
-                <iframe
+                <video
                   class="macbook-screen-doc"
-                  id="macbookPdf"
-                  src="server/Abir%20new.pdf#toolbar=0&navpanes=0&scrollbar=0&zoom=42"
-                  title="Abir PDF preview"
-                ></iframe>
+                  id="macbookVideo"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                >
+                  <source src="server/designed.mp4" type="video/mp4" />
+                </video>
               </div>
             </div>
           </div>
