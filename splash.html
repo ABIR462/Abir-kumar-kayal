@@ -493,10 +493,12 @@
     let velocity = 0;
     let redirected = false;
     let touchY = null;
-    let idleTime = 0;
     let holdOpen = 0;
     let rafId = 0;
     let lastTs = performance.now();
+    const gateStartTs = performance.now();
+    const TOTAL_GATE_MS = 4000;
+    const AUTO_OPEN_MS = 3400;
 
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
@@ -504,7 +506,6 @@
 
     function addInput(delta) {
       target = clamp(target + delta, 0, 1);
-      idleTime = 0;
     }
 
     function completeEntry() {
@@ -515,7 +516,7 @@
       flash.animate(
         [{ opacity: 0 }, { opacity: 1 }],
         {
-          duration: 420,
+          duration: 260,
           easing: "cubic-bezier(0.22, 0.61, 0.36, 1)",
           fill: "forwards"
         }
@@ -524,20 +525,15 @@
       window.setTimeout(() => {
         sessionStorage.setItem("splashPass", "1");
         window.location.replace("index.html");
-      }, 430);
+      }, 270);
     }
 
     function animate(ts) {
       const dt = Math.min((ts - lastTs) / 1000, 0.033);
       lastTs = ts;
-      idleTime += dt;
-
-      if (idleTime > 2.4 && target < 1) {
-        target = clamp(target + dt * 0.05, 0, 1);
-      }
-      if (idleTime > 9 && target < 1) {
-        target = clamp(target + dt * 0.16, 0, 1);
-      }
+      const elapsed = ts - gateStartTs;
+      const autoTarget = clamp(elapsed / AUTO_OPEN_MS, 0, 1);
+      target = Math.max(target, autoTarget);
 
       const stiffness = 26;
       const damping = 11.4;
@@ -601,8 +597,11 @@
     });
 
     window.setTimeout(() => {
-      if (!redirected && target < 1) target = 1;
-    }, 16000);
+      if (!redirected) {
+        target = 1;
+        completeEntry();
+      }
+    }, TOTAL_GATE_MS);
 
     animate(performance.now());
   </script>
