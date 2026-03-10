@@ -20,7 +20,6 @@
     }
   </script>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.68/build/spline-viewer.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@700;800&family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -1445,7 +1444,7 @@
       color: rgba(245,245,240,0.86);
     }
 
-    .mini-art-wrap {
+    .instagram-feature {
       margin-top: 1.15rem;
       padding: 1rem;
       border-radius: 18px;
@@ -1462,25 +1461,27 @@
       isolation: isolate;
     }
 
-    .mini-art-wrap::before {
+    .instagram-feature::before {
       content: "";
       position: absolute;
       inset: 0;
       background: linear-gradient(120deg, rgba(200,255,87,0.16), rgba(87,255,203,0.16), rgba(122,168,255,0.16));
       mix-blend-mode: screen;
       opacity: 0.5;
-      animation: mini-art-bg-shift 9s linear infinite;
+      animation: instagram-aura 10s linear infinite;
       pointer-events: none;
       z-index: -1;
     }
 
-    .mini-art-head {
-      display: grid;
-      gap: 0.32rem;
-      align-content: start;
+    .instagram-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.72rem;
+      flex-wrap: wrap;
     }
 
-    .mini-art-kicker {
+    .instagram-kicker {
       font-family: var(--font-mono);
       font-size: 0.55rem;
       letter-spacing: 0.14em;
@@ -1488,28 +1489,44 @@
       color: rgba(245,245,240,0.7);
     }
 
-    .mini-art-title {
-      font-size: clamp(1rem, 1.9vw, 1.35rem);
-      line-height: 1.1;
-      letter-spacing: -0.01em;
-      font-weight: 700;
-      color: rgba(245,245,240,0.95);
-      text-shadow: 0 0 20px rgba(122,168,255,0.25);
+    .instagram-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.42rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 0.46rem 0.78rem;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: rgba(245,245,240,0.92);
+      background: linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      transition: transform 0.3s ease, border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
     }
 
-    .mini-art-stage {
+    .instagram-link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(200,255,87,0.8);
+      color: var(--accent);
+      background: rgba(200,255,87,0.08);
+    }
+
+    .instagram-preview {
       position: relative;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.18);
-      height: clamp(250px, 42vw, 420px);
       overflow: hidden;
-      background: linear-gradient(180deg, rgba(11,14,18,0.95), rgba(8,10,14,0.95));
+      display: block;
+      text-decoration: none;
+      background: linear-gradient(180deg, rgba(11,14,18,0.98), rgba(8,10,14,0.98));
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.16),
         0 10px 24px rgba(0,0,0,0.3);
     }
 
-    .mini-art-stage::before {
+    .instagram-preview::before {
       content: "";
       position: absolute;
       inset: -2px;
@@ -1517,54 +1534,78 @@
       background: linear-gradient(130deg, #c8ff57 0%, #57ffcb 52%, #7aa8ff 100%);
       opacity: 0.68;
       z-index: 0;
-      animation: mini-art-border-shift 6.5s linear infinite;
+      animation: instagram-border-shift 6.5s linear infinite;
       filter: blur(8px);
       pointer-events: none;
     }
 
-    .mini-art-spline {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      height: 100%;
-      display: block;
-      background: transparent;
-      filter: saturate(1.15) contrast(1.06) brightness(1.02);
-      animation: mini-art-color-cycle 8s ease-in-out infinite;
-    }
-
-    .mini-art-glow {
+    .instagram-preview::after {
+      content: "";
       position: absolute;
       inset: 0;
-      z-index: 1;
+      z-index: 2;
       pointer-events: none;
       background:
-        radial-gradient(55% 42% at 18% 16%, rgba(200,255,87,0.2), transparent 65%),
-        radial-gradient(52% 42% at 82% 20%, rgba(87,255,203,0.18), transparent 65%),
-        radial-gradient(52% 42% at 50% 85%, rgba(122,168,255,0.18), transparent 65%);
+        radial-gradient(55% 42% at 18% 16%, rgba(200,255,87,0.18), transparent 65%),
+        radial-gradient(52% 42% at 82% 20%, rgba(87,255,203,0.14), transparent 65%),
+        radial-gradient(52% 42% at 50% 85%, rgba(122,168,255,0.16), transparent 65%);
       mix-blend-mode: screen;
-      animation: mini-art-glow-pulse 6s ease-in-out infinite;
+      animation: instagram-glow-pulse 6s ease-in-out infinite;
     }
 
-    @keyframes mini-art-color-cycle {
+    .instagram-image {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: block;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      filter: saturate(1.15) contrast(1.06) brightness(1.02);
+      animation: instagram-color-cycle 8s ease-in-out infinite;
+      transition: transform 0.7s ease;
+    }
+
+    .instagram-feature:hover .instagram-image {
+      transform: scale(1.05);
+    }
+
+    .instagram-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .instagram-chip {
+      padding: 0.24rem 0.56rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 0.52rem;
+      letter-spacing: 0.08em;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      color: rgba(245,245,240,0.72);
+      background: rgba(255,255,255,0.03);
+    }
+
+    @keyframes instagram-color-cycle {
       0%, 100% { filter: saturate(1.15) contrast(1.06) brightness(1.02) hue-rotate(0deg); }
       33% { filter: saturate(1.18) contrast(1.07) brightness(1.03) hue-rotate(82deg); }
       66% { filter: saturate(1.18) contrast(1.08) brightness(1.03) hue-rotate(214deg); }
     }
 
-    @keyframes mini-art-border-shift {
+    @keyframes instagram-border-shift {
       0% { transform: translateX(-2%) scale(1.01); }
       50% { transform: translateX(2%) scale(1.015); }
       100% { transform: translateX(-2%) scale(1.01); }
     }
 
-    @keyframes mini-art-bg-shift {
+    @keyframes instagram-aura {
       0% { filter: hue-rotate(0deg); }
       50% { filter: hue-rotate(150deg); }
       100% { filter: hue-rotate(300deg); }
     }
 
-    @keyframes mini-art-glow-pulse {
+    @keyframes instagram-glow-pulse {
       0%, 100% { opacity: 0.62; }
       50% { opacity: 0.88; }
     }
@@ -2716,16 +2757,19 @@
         gap: 0.65rem;
       }
 
-      .mini-art-wrap {
+      .instagram-feature {
         margin-top: 0.9rem;
         padding: 0.76rem;
         border-radius: 14px;
         gap: 0.62rem;
       }
 
-      .mini-art-stage {
-        height: clamp(220px, 58vw, 300px);
+      .instagram-preview {
         border-radius: 12px;
+      }
+
+      .instagram-image {
+        aspect-ratio: 5 / 4;
       }
 
       .contact-video-note {
@@ -2803,12 +2847,13 @@
         justify-content: center;
       }
 
-      .mini-art-title {
-        font-size: clamp(0.92rem, 4.5vw, 1.1rem);
+      .instagram-link {
+        width: 100%;
+        justify-content: center;
       }
 
-      .mini-art-stage {
-        height: clamp(200px, 56vw, 255px);
+      .instagram-image {
+        aspect-ratio: 4 / 3;
       }
     }
 
@@ -2830,8 +2875,8 @@
         font-size: 0.76rem;
       }
 
-      .mini-art-stage {
-        height: clamp(176px, 54vw, 220px);
+      .instagram-image {
+        aspect-ratio: 1 / 1;
       }
     }
 
@@ -3577,22 +3622,39 @@
       </div>
     </div>
 
-    <div class="mini-art-wrap">
-      <div class="mini-art-head">
-       
+    
+    <div class="instagram-feature">
+      <div class="instagram-head">
+        <span class="instagram-kicker">Instagram</span>
+        <a
+          class="instagram-link"
+          href="https://www.instagram.com/abir.kayal_/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open Instagram profile"
+        >
+          <i class="fab fa-instagram" aria-hidden="true"></i>
+          @abir.kayal_
+        </a>
       </div>
-      <div class="mini-art-stage">
-        <spline-viewer
-          class="mini-art-spline"
-          loading-anim-type="spinner-small-dark"
-          url="https://prod.spline.design/qP-0-Oul0iw5t-Qo/scene.splinecode"
-        ></spline-viewer>
-        <div class="mini-art-glow" aria-hidden="true"></div>
+      <a
+        class="instagram-preview"
+        href="https://www.instagram.com/abir.kayal_/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="View Instagram profile"
+      >
+        <img class="instagram-image" src="server/instagram.png" alt="Instagram profile preview">
+      </a>
+      <div class="instagram-chip-row">
+        <span class="instagram-chip">Design updates</span>
+        <span class="instagram-chip">Build moments</span>
+        <span class="instagram-chip">Behind scenes</span>
       </div>
     </div>
   </section>
 
-  <!-- ─── FOOTER ────────────────────────────────── -->
+  <!-- FOOTER -->
   <footer>
     <span class="footer-copy">© <span id="year"></span> Abir Kumar Kayal. All rights reserved.</span>
     <div class="footer-links">
@@ -4169,6 +4231,7 @@
   </script>
 </body>
 </html>
+
 
 
 
