@@ -1100,12 +1100,17 @@
     .project-item:hover .project-tag { border-color: rgba(200,255,87,0.3); color: var(--white); }
 
     .project-arrow {
-      font-size: 1.2rem;
+      font-size: 0;
       color: var(--muted);
       flex-shrink: 0;
       transform: translateX(-10px) rotate(-45deg);
       opacity: 0;
       transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .project-arrow::before {
+      content: "\2197";
+      font-size: 1.2rem;
     }
 
     .project-item:hover .project-arrow {
@@ -4420,7 +4425,7 @@
     let previewRequestId = 0;
 
     function showProjectPreview(item) {
-      const previewText = item.dataset.preview || item.querySelector('.project-name')?.textContent || 'Preview';
+      const previewText = item.querySelector('.project-name')?.textContent || item.dataset.preview || 'Preview';
       const previewImage = item.dataset.previewImage;
       const requestId = ++previewRequestId;
 
