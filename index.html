@@ -426,6 +426,7 @@
       --open-progress: 0;
       --scale-progress: 0;
       --float: 0;
+      --lid-angle: 92deg;
       width: min(1060px, 92vw);
       justify-self: center;
       align-self: start;
@@ -491,6 +492,7 @@
       margin: 0 auto;
       position: relative;
       transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
       filter: drop-shadow(0 35px 70px rgba(0, 0, 0, 0.58));
     }
 
@@ -512,6 +514,7 @@
       width: 100%;
       height: clamp(260px, 32vw, 520px);
       transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
       z-index: 2;
     }
 
@@ -523,8 +526,12 @@
       background: linear-gradient(180deg, #141418 0%, #09090b 90%);
       transform-origin: bottom center;
       transform-style: preserve-3d;
-      transform: perspective(2200px) rotateX(calc(-92deg + (var(--open-progress) * 92deg)));
+      -webkit-transform-style: preserve-3d;
+      transform: perspective(2200px) rotateX(calc((var(--open-progress) - 1) * var(--lid-angle))) translateZ(0.01px);
       transition: transform 140ms cubic-bezier(0.22, 0.61, 0.36, 1);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      will-change: transform;
       box-shadow:
         inset 0 0 0 1px rgba(255,255,255,0.08),
         inset 0 -18px 40px rgba(0,0,0,0.32);
@@ -540,6 +547,9 @@
         0 0 0 1px rgba(255,255,255,0.04) inset,
         0 0 90px rgba(87,255,203,0.09) inset;
       position: relative;
+      transform: translateZ(1px);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
 
     .macbook-screen-frame .macbook-screen-image {
@@ -552,6 +562,9 @@
       transform: translateY(calc((1 - var(--open-progress)) * -2.5%))
         scale(calc(1.03 + (1 - var(--open-progress)) * 0.05));
       transform-origin: center top;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      will-change: transform;
     }
 
     .macbook-screen-frame .macbook-screen-doc {
@@ -765,6 +778,75 @@
       flex-wrap: wrap;
     }
 
+    .hero-proof-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.65rem;
+    }
+
+    .hero-proof-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.62rem 0.82rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+      box-shadow: 0 14px 30px rgba(0,0,0,0.2);
+      color: rgba(245,245,240,0.72);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero-proof-chip strong {
+      color: var(--white);
+      font-size: 0.66rem;
+      letter-spacing: 0.12em;
+    }
+
+    .hero-device-badge {
+      position: absolute;
+      left: clamp(-1rem, -1.8vw, -0.35rem);
+      bottom: 12%;
+      display: grid;
+      gap: 0.28rem;
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background:
+        linear-gradient(160deg, rgba(255,255,255,0.09), rgba(255,255,255,0.015)),
+        linear-gradient(140deg, rgba(200,255,87,0.12), rgba(87,255,203,0.08) 55%, rgba(7,10,14,0.82) 100%);
+      box-shadow: 0 18px 38px rgba(0,0,0,0.34);
+      backdrop-filter: blur(12px);
+      z-index: 4;
+    }
+
+    .hero-device-badge-label,
+    .hero-device-badge-meta {
+      font-family: var(--font-mono);
+      font-size: 0.54rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero-device-badge-label {
+      color: rgba(245,245,240,0.62);
+    }
+
+    .hero-device-badge-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .hero-device-badge-meta {
+      color: rgba(245,245,240,0.76);
+    }
+
     .btn-primary {
       display: inline-flex;
       align-items: center;
@@ -800,12 +882,30 @@
     .btn-ghost:hover { color: var(--white); }
 
     .hero-scroll-cue {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
       margin-top: 0.85rem;
+      padding: 0.44rem 0.76rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(14,16,18,0.5);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.18);
       font-family: var(--font-mono);
       font-size: 0.58rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: rgba(245,245,240,0.5);
+    }
+
+    .hero-scroll-cue::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 14px rgba(87,255,203,0.45);
+      animation: pulse-dot 2s infinite;
     }
 
     /* ─── SECTION COMMON ──────────────────────── */
@@ -1048,6 +1148,18 @@
       font-size: 0.7rem;
       color: var(--muted);
       letter-spacing: 0.1em;
+    }
+
+    .project-preview-placeholder.has-image {
+      display: block;
+      background: #101114;
+    }
+
+    .project-preview-placeholder.has-image img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
     }
 
     /* ─── ABOUT ───────────────────────────────── */
@@ -1444,170 +1556,106 @@
       color: rgba(245,245,240,0.86);
     }
 
-    .instagram-feature {
-      margin-top: 1.15rem;
-      padding: 1rem;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background:
-        radial-gradient(120% 120% at 0% 0%, rgba(200,255,87,0.08), transparent 62%),
-        radial-gradient(120% 120% at 100% 0%, rgba(87,255,203,0.08), transparent 58%),
-        linear-gradient(160deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      box-shadow: 0 16px 34px rgba(0,0,0,0.28);
-      display: grid;
-      gap: 0.82rem;
-      overflow: hidden;
-      position: relative;
-      isolation: isolate;
-    }
-
-    .instagram-feature::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(120deg, rgba(200,255,87,0.16), rgba(87,255,203,0.16), rgba(122,168,255,0.16));
-      mix-blend-mode: screen;
-      opacity: 0.5;
-      animation: instagram-aura 10s linear infinite;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .instagram-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.72rem;
-      flex-wrap: wrap;
-    }
-
-    .instagram-kicker {
-      font-family: var(--font-mono);
-      font-size: 0.55rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(245,245,240,0.7);
-    }
-
-    .instagram-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.42rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.18);
-      padding: 0.46rem 0.78rem;
-      font-family: var(--font-mono);
-      font-size: 0.58rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: rgba(245,245,240,0.92);
-      background: linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      transition: transform 0.3s ease, border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
-    }
-
-    .instagram-link:hover {
-      transform: translateY(-2px);
-      border-color: rgba(200,255,87,0.8);
-      color: var(--accent);
-      background: rgba(200,255,87,0.08);
-    }
-
     .instagram-preview {
-      position: relative;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.18);
-      overflow: hidden;
       display: block;
+      margin-top: 1.15rem;
       text-decoration: none;
-      background: linear-gradient(180deg, rgba(11,14,18,0.98), rgba(8,10,14,0.98));
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.16),
-        0 10px 24px rgba(0,0,0,0.3);
-    }
-
-    .instagram-preview::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      border-radius: 16px;
-      background: linear-gradient(130deg, #c8ff57 0%, #57ffcb 52%, #7aa8ff 100%);
-      opacity: 0.68;
-      z-index: 0;
-      animation: instagram-border-shift 6.5s linear infinite;
-      filter: blur(8px);
-      pointer-events: none;
-    }
-
-    .instagram-preview::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      background:
-        radial-gradient(55% 42% at 18% 16%, rgba(200,255,87,0.18), transparent 65%),
-        radial-gradient(52% 42% at 82% 20%, rgba(87,255,203,0.14), transparent 65%),
-        radial-gradient(52% 42% at 50% 85%, rgba(122,168,255,0.16), transparent 65%);
-      mix-blend-mode: screen;
-      animation: instagram-glow-pulse 6s ease-in-out infinite;
     }
 
     .instagram-image {
-      position: relative;
-      z-index: 1;
       width: 100%;
       display: block;
       aspect-ratio: 16 / 9;
-      object-fit: cover;
-      filter: saturate(1.15) contrast(1.06) brightness(1.02);
-      animation: instagram-color-cycle 8s ease-in-out infinite;
-      transition: transform 0.7s ease;
+      height: auto;
+      object-fit: contain;
     }
 
-    .instagram-feature:hover .instagram-image {
-      transform: scale(1.05);
+    .type-slider-section {
+      margin-top: 1.4rem;
     }
 
-    .instagram-chip-row {
+    .type-slider-shell {
+      position: relative;
+      overflow: hidden;
+      padding: 1rem 0;
+    }
+
+    .type-slider-shell::before,
+    .type-slider-shell::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: clamp(2rem, 7vw, 5rem);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .type-slider-shell::before {
+      left: 0;
+      background: linear-gradient(90deg, rgba(10,10,10,0.96), rgba(10,10,10,0));
+    }
+
+    .type-slider-shell::after {
+      right: 0;
+      background: linear-gradient(270deg, rgba(10,10,10,0.96), rgba(10,10,10,0));
+    }
+
+    .type-slider-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
+      overflow: hidden;
+      white-space: nowrap;
     }
 
-    .instagram-chip {
-      padding: 0.24rem 0.56rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      font-size: 0.52rem;
-      letter-spacing: 0.08em;
-      font-family: var(--font-mono);
+    .type-slider-row + .type-slider-row {
+      margin-top: 0.5rem;
+      opacity: 0.8;
+    }
+
+    .type-slider-track {
+      display: flex;
+      align-items: center;
+      gap: clamp(1.1rem, 2.4vw, 2rem);
+      width: max-content;
+      animation: type-slider-left 22s linear infinite;
+      will-change: transform;
+    }
+
+    .type-slider-row.reverse .type-slider-track {
+      animation-name: type-slider-right;
+      animation-duration: 24s;
+    }
+
+    .type-slider-word {
+      flex: 0 0 auto;
+      font-family: var(--font-funk);
+      font-size: clamp(2rem, 5.8vw, 4.9rem);
+      line-height: 0.92;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: rgba(245,245,240,0.72);
-      background: rgba(255,255,255,0.03);
+      color: #ffffff;
+      text-shadow:
+        0 0 24px rgba(255,255,255,0.08),
+        0 10px 30px rgba(0,0,0,0.25);
     }
 
-    @keyframes instagram-color-cycle {
-      0%, 100% { filter: saturate(1.15) contrast(1.06) brightness(1.02) hue-rotate(0deg); }
-      33% { filter: saturate(1.18) contrast(1.07) brightness(1.03) hue-rotate(82deg); }
-      66% { filter: saturate(1.18) contrast(1.08) brightness(1.03) hue-rotate(214deg); }
+    .type-slider-sep {
+      flex: 0 0 auto;
+      width: clamp(0.5rem, 1vw, 0.85rem);
+      height: clamp(0.5rem, 1vw, 0.85rem);
+      border-radius: 50%;
+      background: rgba(255,255,255,0.88);
+      box-shadow: 0 0 18px rgba(255,255,255,0.18);
     }
 
-    @keyframes instagram-border-shift {
-      0% { transform: translateX(-2%) scale(1.01); }
-      50% { transform: translateX(2%) scale(1.015); }
-      100% { transform: translateX(-2%) scale(1.01); }
+    @keyframes type-slider-left {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-50%, 0, 0); }
     }
 
-    @keyframes instagram-aura {
-      0% { filter: hue-rotate(0deg); }
-      50% { filter: hue-rotate(150deg); }
-      100% { filter: hue-rotate(300deg); }
-    }
-
-    @keyframes instagram-glow-pulse {
-      0%, 100% { opacity: 0.62; }
-      50% { opacity: 0.88; }
+    @keyframes type-slider-right {
+      from { transform: translate3d(-50%, 0, 0); }
+      to { transform: translate3d(0, 0, 0); }
     }
 
     @media (max-width: 900px) {
@@ -2145,6 +2193,13 @@
       margin-right: auto;
     }
 
+    .section > .type-slider-section {
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+    }
+
     .hero-layout {
       top: 5.2rem;
       gap: clamp(1.6rem, 3vw, 2.8rem);
@@ -2489,7 +2544,7 @@
 
       .hero-media {
         width: min(100%, 820px);
-        transform: none !important;
+        transform: translateY(calc((1 - var(--open-progress)) * 18px)) scale(calc(0.94 + (var(--scale-progress) * 0.06))) !important;
       }
 
       .hero-side-copy {
@@ -2515,50 +2570,63 @@
       }
 
       .hero {
-        min-height: 100vh;
-        min-height: 100svh;
-        min-height: 100dvh;
+        min-height: clamp(42rem, 114svh, 54rem);
         padding-top: 5.2rem;
-        padding-bottom: 1.05rem;
+        padding-bottom: 1.6rem;
       }
 
       .hero-layout {
         width: 100%;
-        gap: 0.95rem;
+        gap: 1.35rem;
       }
 
       .hero-content {
         width: 100%;
-        text-align: left;
+        text-align: center;
         margin-top: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
       }
 
       .hero-eyebrow {
-        margin-left: 0;
-        margin-right: 0;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .hero-title {
-        font-size: clamp(2.05rem, 9.3vw, 3.35rem);
-        line-height: 0.98;
-        margin-bottom: 0.75rem;
+        font-size: clamp(2.3rem, 10vw, 3.6rem);
+        line-height: 0.95;
+        margin-bottom: 0.8rem;
       }
 
       .hero-bottom {
-        justify-items: start;
-        gap: 0.85rem;
+        justify-items: center;
+        gap: 1rem;
       }
 
       .hero-desc {
-        font-size: 0.9rem;
-        max-width: 56ch;
-        line-height: 1.62;
+        font-size: 0.94rem;
+        max-width: 33rem;
+        line-height: 1.66;
+        text-align: center;
       }
 
       .hero-actions {
         width: 100%;
-        justify-content: flex-start;
-        gap: 0.58rem;
+        justify-content: center;
+        gap: 0.7rem;
+      }
+
+      .hero-proof-row {
+        justify-content: center;
+        gap: 0.6rem;
+      }
+
+      .hero-proof-chip {
+        min-width: 0;
       }
 
       .hero-actions .btn-primary,
@@ -2568,13 +2636,18 @@
       }
 
       .hero-scroll-cue {
-        display: none;
+        margin-top: 0.2rem;
       }
 
       .hero-media {
         width: 100%;
-        max-width: 700px;
-        margin-top: 0;
+        max-width: 760px;
+        margin-top: 0.2rem;
+        padding-bottom: 3.4rem;
+        --lid-angle: 84deg;
+        transform: translateY(calc((1 - var(--open-progress)) * 16px)) scale(calc(0.95 + (var(--scale-progress) * 0.05))) !important;
+        display: grid;
+        gap: 0.85rem;
       }
 
       .macbook-shell::after {
@@ -2582,11 +2655,11 @@
       }
 
       .macbook-lid-wrap {
-        height: clamp(184px, 52vw, 250px);
+        height: clamp(214px, 61vw, 340px);
       }
 
       .macbook-base {
-        height: clamp(90px, 24vw, 132px);
+        height: clamp(108px, 28vw, 168px);
       }
 
       .macbook-speaker {
@@ -2598,6 +2671,39 @@
       .macbook-trackpad {
         height: 28px;
         margin-top: 28px;
+      }
+
+      .hero-device-badge {
+        position: static;
+        left: auto;
+        bottom: auto;
+        width: fit-content;
+        justify-self: center;
+        text-align: center;
+      }
+
+      .hero-side-copy {
+        display: grid;
+        left: 50%;
+        right: auto;
+        top: auto;
+        bottom: 0;
+        width: max-content;
+        justify-items: center;
+        text-align: center;
+        transform: translateX(-50%) rotate(-3deg);
+        z-index: 5;
+      }
+
+      .hero-side-copy .lead {
+        font-size: 0.54rem;
+        letter-spacing: 0.16em;
+        padding-left: 0;
+      }
+
+      .hero-side-copy .name {
+        font-size: clamp(1.15rem, 5vw, 1.55rem);
+        padding: 0.56rem 0.78rem 0.42rem;
       }
 
       .mobile-nav {
@@ -2757,19 +2863,20 @@
         gap: 0.65rem;
       }
 
-      .instagram-feature {
-        margin-top: 0.9rem;
-        padding: 0.76rem;
-        border-radius: 14px;
-        gap: 0.62rem;
-      }
-
-      .instagram-preview {
-        border-radius: 12px;
-      }
-
       .instagram-image {
         aspect-ratio: 5 / 4;
+      }
+
+      .type-slider-section {
+        margin-top: 1rem;
+      }
+
+      .type-slider-shell {
+        padding: 0.8rem 0;
+      }
+
+      .type-slider-word {
+        font-size: clamp(1.55rem, 8vw, 3rem);
       }
 
       .contact-video-note {
@@ -2817,16 +2924,42 @@
     @media (max-width: 640px) {
       .hero {
         padding-top: 4.85rem;
+        min-height: clamp(36rem, 104svh, 46rem);
       }
 
       .hero-title {
-        font-size: clamp(1.78rem, 9.4vw, 2.55rem);
+        font-size: clamp(2.02rem, 10.6vw, 2.95rem);
+      }
+
+      .hero-content {
+        padding: 0;
       }
 
       .hero-actions .btn-primary,
       .hero-actions .btn-ghost {
         width: 100%;
         max-width: 100%;
+      }
+
+      .hero-proof-chip {
+        width: auto;
+      }
+
+      .hero-media {
+        padding-bottom: 3rem;
+      }
+
+      .hero-device-badge {
+        width: min(100%, 18rem);
+      }
+
+      .hero-side-copy {
+        transform: translateX(-50%) rotate(-2deg);
+      }
+
+      .hero-side-copy .name {
+        font-size: clamp(1rem, 6vw, 1.28rem);
+        padding: 0.5rem 0.68rem 0.36rem;
       }
 
       .mobile-nav-links a {
@@ -2847,28 +2980,41 @@
         justify-content: center;
       }
 
-      .instagram-link {
-        width: 100%;
-        justify-content: center;
-      }
-
       .instagram-image {
         aspect-ratio: 4 / 3;
+      }
+
+      .type-slider-word {
+        font-size: clamp(1.35rem, 9.2vw, 2.35rem);
+        letter-spacing: 0.04em;
       }
     }
 
     @media (max-width: 420px) {
       .hero {
         padding-top: 4.65rem;
+        min-height: clamp(33rem, 100svh, 40rem);
       }
 
       .hero-title {
-        font-size: clamp(1.56rem, 9.2vw, 2.02rem);
+        font-size: clamp(1.78rem, 9.5vw, 2.24rem);
       }
 
       .hero-eyebrow {
-        width: 100%;
+        width: fit-content;
         justify-content: center;
+      }
+
+      .hero-side-copy {
+        bottom: 0.15rem;
+      }
+
+      .hero-side-copy .lead {
+        font-size: 0.48rem;
+      }
+
+      .hero-side-copy .name {
+        font-size: 0.96rem;
       }
 
       .contact-email {
@@ -2877,6 +3023,18 @@
 
       .instagram-image {
         aspect-ratio: 1 / 1;
+      }
+
+      .type-slider-shell {
+        padding: 0.72rem 0;
+      }
+
+      .type-slider-word {
+        font-size: clamp(1.1rem, 9.5vw, 1.82rem);
+      }
+
+      .type-slider-row + .type-slider-row {
+        margin-top: 0.35rem;
       }
     }
 
@@ -2976,7 +3134,7 @@
 
         <div class="hero-bottom">
           <p class="hero-desc">
-            Crafting high-impact portfolio websites and product UIs with clean frontend architecture, strong performance, and polished interactions.
+            I design and build premium portfolio sites and product interfaces that stay sharp on mobile, feel refined on desktop, and use motion with intent.
           </p>
           <div class="hero-actions">
             <a href="#work" class="btn-primary">
@@ -2985,6 +3143,11 @@
             <a href="#contact" class="btn-ghost">
               Say hello <i class="fas fa-arrow-right"></i>
             </a>
+          </div>
+          <div class="hero-proof-row" aria-label="Key strengths">
+            <span class="hero-proof-chip"><strong>Mobile-first</strong> responsive UI</span>
+            <span class="hero-proof-chip"><strong>Motion-led</strong> polished interactions</span>
+            <span class="hero-proof-chip"><strong>Clean code</strong> frontend systems</span>
           </div>
         </div>
         <div class="hero-scroll-cue">Scroll to open the device</div>
@@ -3013,12 +3176,43 @@
             <div class="macbook-trackpad"></div>
           </div>
         </div>
+        <div class="hero-device-badge" aria-hidden="true">
+          <span class="hero-device-badge-label">Current Focus</span>
+          <span class="hero-device-badge-title">Motion-led portfolio UI</span>
+          <span class="hero-device-badge-meta">Responsive systems + Fast interactions</span>
+        </div>
         <div class="hero-side-copy" aria-hidden="true">
           <span class="lead">HEY I AM</span>
           <span class="name">ABIR</span>
           <span class="lead">ABIR KUMAR KAYAL</span>
         </div>
       </div>
+      <!--
+         data-preview="Interactive web music player with playlists and animated controls."
+         data-preview-image="https://image.thum.io/get/width/1200/crop/900/https://ak47music.vercel.app">
+        <span class="project-num">05</span>
+        <span class="project-name">AK-47 Music Player</span>
+        <div class="project-tags">
+          <span class="project-tag">JavaScript</span>
+          <span class="project-tag">HTML5 Audio API</span>
+        </div>
+        <span class="project-arrow">â†—</span>
+      </a>
+
+      <a class="project-item" href="https://nursing-gpt.vercel.app/" target="_blank"
+         data-preview="AI assistant for nursing students powered by React and NVIDIA API."
+         data-preview-image="https://image.thum.io/get/width/1200/crop/900/https://nursing-gpt.vercel.app/">
+        <span class="project-num">06</span>
+        <span class="project-name">Nursing GPT</span>
+        <div class="project-tags">
+          <span class="project-tag">React</span>
+          <span class="project-tag">Tailwind CSS</span>
+          <span class="project-tag">JavaScript</span>
+          <span class="project-tag">NVIDIA API</span>
+        </div>
+        <span class="project-arrow">â†—</span>
+      </a>
+      -->
     </div>
   </section>
 
@@ -3062,52 +3256,82 @@
     </div>
 
     <div class="project-list">
-      <a class="project-item" href="https://ajantrik.netlify.app" target="_blank"
+      <a class="project-item" href="https://ramlallaa.in" target="_blank"
+         data-preview-image="https://image.thum.io/get/width/1200/crop/900/https://ramlallaa.in"
          data-preview="Ajantrik 2K25 — Event Management Platform">
         <span class="project-num">01</span>
-        <span class="project-name">Ajantrik 2K25</span>
+        <span class="project-name">Ramlallaa.in</span>
         <div class="project-tags">
-          <span class="project-tag">React</span>
-          <span class="project-tag">Tailwind</span>
+          <span class="project-tag">HTML</span>
+          <span class="project-tag">CSS</span>
           <span class="project-tag">JavaScript</span>
         </div>
         <span class="project-arrow">↗</span>
       </a>
 
       <a class="project-item" href="https://vojonrosikrestaurant.com" target="_blank"
+         data-preview-image="https://image.thum.io/get/width/1200/crop/900/https://vojonrosikrestaurant.com"
          data-preview="Vojon Rosik Restaurant — Restaurant web App">
         <span class="project-num">02</span>
-        <span class="project-name">Vojon Rosik Restaurant</span>
-        <div class="project-tags">
-          <span class="project-tag">HTML5</span>
-          <span class="project-tag">CSS3</span>
-          <span class="project-tag">JavaScript, node js</span>
-        </div>
-        <span class="project-arrow">↗</span>
-      </a>
-
-      <a class="project-item" href="https://nursing-gpt.vercel.app" target="_blank"
-         data-preview="Online Virus Scanner — File & URL Security Tool">
-        <span class="project-num">03</span>
-        <span class="project-name">NURSING GPT AI</span>
-        <div class="project-tags">
-          <span class="project-tag">React + Vite</span>
-          <span class="project-tag">Node.js</span>
-          <span class="project-tag">API</span>
-        </div>
-        <span class="project-arrow">↗</span>
-      </a>
-
-      <a class="project-item" href="https://github.com/abir462" target="_blank"
-         data-preview="Portfolio — This very website you're looking at">
-        <span class="project-num">04</span>
-        <span class="project-name">Portfolio Website</span>
+        <span class="project-name">Vojon Rosik Restaurant Website</span>
         <div class="project-tags">
           <span class="project-tag">HTML</span>
           <span class="project-tag">CSS</span>
-          <span class="project-tag">Vanilla JS</span>
+          <span class="project-tag">JavaScript</span>
         </div>
         <span class="project-arrow">↗</span>
+      </a>
+
+      <a class="project-item" href="https://abir-kumar-kayal.vercel.app" target="_blank"
+         data-preview-image="https://image.thum.io/get/width/1200/crop/900/https://abir-kumar-kayal.vercel.app"
+         data-preview="Online Virus Scanner — File & URL Security Tool">
+        <span class="project-num">03</span>
+        <span class="project-name">Portfolio Website</span>
+        <div class="project-tags">
+          <span class="project-tag">React</span>
+          <span class="project-tag">Tailwind CSS</span>
+        </div>
+        <span class="project-arrow">↗</span>
+      </a>
+
+      <a class="project-item" href="https://fruityyz.netlify.app/" target="_blank"
+         data-preview-image="https://image.thum.io/get/width/1200/crop/900/https://fruityyz.netlify.app/"
+         data-preview="Portfolio — This very website you're looking at">
+        <span class="project-num">04</span>
+        <span class="project-name">Fruityyz Restaurant Website</span>
+        <div class="project-tags">
+          <span class="project-tag">HTML</span>
+          <span class="project-tag">CSS</span>
+          <span class="project-tag">JavaScript</span>
+          <span class="project-tag">Tailwind CSS</span>
+        </div>
+        <span class="project-arrow">↗</span>
+      </a>
+
+      <a class="project-item" href="https://ak47music.vercel.app" target="_blank"
+         data-preview="Interactive web music player with playlists and animated controls."
+         data-preview-image="https://image.thum.io/get/width/1200/crop/900/https://ak47music.vercel.app">
+        <span class="project-num">05</span>
+        <span class="project-name">AK-47 Music Player</span>
+        <div class="project-tags">
+          <span class="project-tag">JavaScript</span>
+          <span class="project-tag">HTML5 Audio API</span>
+        </div>
+        <span class="project-arrow">â†—</span>
+      </a>
+
+      <a class="project-item" href="https://nursing-gpt.vercel.app/" target="_blank"
+         data-preview="AI assistant for nursing students powered by React and NVIDIA API."
+         data-preview-image="https://image.thum.io/get/width/1200/crop/900/https://nursing-gpt.vercel.app/">
+        <span class="project-num">06</span>
+        <span class="project-name">Nursing GPT</span>
+        <div class="project-tags">
+          <span class="project-tag">React</span>
+          <span class="project-tag">Tailwind CSS</span>
+          <span class="project-tag">JavaScript</span>
+          <span class="project-tag">NVIDIA API</span>
+        </div>
+        <span class="project-arrow">â†—</span>
       </a>
     </div>
   </section>
@@ -3621,35 +3845,42 @@
         </div>
       </div>
     </div>
+    <a
+      class="instagram-preview"
+      href="https://www.instagram.com/abir.kayal_/"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="View Instagram profile"
+    >
+      <img class="instagram-image" src="server/instagram.png" alt="Instagram profile preview">
+    </a>
 
-    
-    <div class="instagram-feature">
-      <div class="instagram-head">
-        <span class="instagram-kicker">Instagram</span>
-        <a
-          class="instagram-link"
-          href="https://www.instagram.com/abir.kayal_/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Open Instagram profile"
-        >
-          <i class="fab fa-instagram" aria-hidden="true"></i>
-          @abir.kayal_
-        </a>
-      </div>
-      <a
-        class="instagram-preview"
-        href="https://www.instagram.com/abir.kayal_/"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="View Instagram profile"
-      >
-        <img class="instagram-image" src="server/instagram.png" alt="Instagram profile preview">
-      </a>
-      <div class="instagram-chip-row">
-        <span class="instagram-chip">Design updates</span>
-        <span class="instagram-chip">Build moments</span>
-        <span class="instagram-chip">Behind scenes</span>
+    <div class="type-slider-section" aria-label="Animated typography banner">
+      <div class="type-slider-shell">
+        <div class="type-slider-row">
+          <div class="type-slider-track">
+            <span class="type-slider-word">ABIR KUMAR KAYAL</span>
+            <span class="type-slider-sep" aria-hidden="true"></span>
+            <span class="type-slider-word">ABIR KUMAR KAYAL</span>
+            <span class="type-slider-sep" aria-hidden="true"></span>
+            <span class="type-slider-word">ABIR KUMAR KAYAL</span>
+            <span class="type-slider-sep" aria-hidden="true"></span>
+            <span class="type-slider-word">ABIR KUMAR KAYAL</span>
+            <span class="type-slider-sep" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="type-slider-row reverse">
+          <div class="type-slider-track">
+            <span class="type-slider-word">ABIR KUMAR KAYAL</span>
+            <span class="type-slider-sep" aria-hidden="true"></span>
+            <span class="type-slider-word">ABIR KUMAR KAYAL</span>
+            <span class="type-slider-sep" aria-hidden="true"></span>
+            <span class="type-slider-word">ABIR KUMAR KAYAL</span>
+            <span class="type-slider-sep" aria-hidden="true"></span>
+            <span class="type-slider-word">ABIR KUMAR KAYAL</span>
+            <span class="type-slider-sep" aria-hidden="true"></span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -4057,20 +4288,31 @@
     let currentScaleProgress = 0;
     let floatPhase = 0;
     const isCompactViewport = () => window.matchMedia('(max-width: 900px)').matches;
+    const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
+
+    function getMacbookProgress(rect) {
+      if (isCompactViewport()) {
+        const travel = Math.max(hero.offsetHeight - window.innerHeight * 0.2, window.innerHeight * 0.9);
+        return clamp((-rect.top + window.innerHeight * 0.12) / travel);
+      }
+
+      const travel = Math.max(hero.offsetHeight - window.innerHeight * 0.72, 1);
+      return clamp((-rect.top + window.innerHeight * 0.08) / travel);
+    }
 
     function updateMacbookProgress() {
       if (!hero || !macbookMedia || window.__EMBED_MODE__) return;
+      const rect = hero.getBoundingClientRect();
+      const progress = getMacbookProgress(rect);
+
       if (isCompactViewport()) {
-        targetOpenProgress = 1;
-        targetScaleProgress = 1;
+        targetOpenProgress = clamp(0.12 + (progress * 0.88));
+        targetScaleProgress = clamp(0.78 + (progress * 0.22));
         return;
       }
-      const rect = hero.getBoundingClientRect();
-      const travel = Math.max(hero.offsetHeight - window.innerHeight * 0.72, 1);
-      const raw = (-rect.top + window.innerHeight * 0.08) / travel;
-      const progress = Math.min(Math.max(raw, 0), 1);
-      targetOpenProgress = Math.min(Math.max((progress - 0.02) / 0.5, 0), 1);
-      targetScaleProgress = Math.min(Math.max((progress - 0.03) / 0.66, 0), 1);
+
+      targetOpenProgress = clamp((progress - 0.02) / 0.5);
+      targetScaleProgress = clamp((progress - 0.03) / 0.66);
     }
 
     function animateMacbook() {
@@ -4175,13 +4417,45 @@
     // ─── PROJECT HOVER PREVIEW ────────────────────────
     const preview = document.getElementById('projectPreview');
     const previewContent = document.getElementById('previewContent');
+    let previewRequestId = 0;
+
+    function showProjectPreview(item) {
+      const previewText = item.dataset.preview || item.querySelector('.project-name')?.textContent || 'Preview';
+      const previewImage = item.dataset.previewImage;
+      const requestId = ++previewRequestId;
+
+      previewContent.classList.remove('has-image');
+      previewContent.textContent = previewText;
+
+      if (!previewImage) return;
+
+      const img = new Image();
+      img.src = previewImage;
+      img.alt = `${item.querySelector('.project-name')?.textContent || 'Project'} preview`;
+      img.decoding = 'async';
+
+      img.onload = () => {
+        if (requestId !== previewRequestId) return;
+        previewContent.classList.add('has-image');
+        previewContent.replaceChildren(img);
+      };
+
+      img.onerror = () => {
+        if (requestId !== previewRequestId) return;
+        previewContent.classList.remove('has-image');
+        previewContent.textContent = previewText;
+      };
+    }
 
     document.querySelectorAll('.project-item').forEach(item => {
       item.addEventListener('mouseenter', e => {
-        previewContent.textContent = item.dataset.preview;
+        showProjectPreview(item);
         preview.classList.add('show');
       });
-      item.addEventListener('mouseleave', () => preview.classList.remove('show'));
+      item.addEventListener('mouseleave', () => {
+        previewRequestId += 1;
+        preview.classList.remove('show');
+      });
       item.addEventListener('mousemove', e => {
         preview.style.left = (e.clientX + 20) + 'px';
         preview.style.top = (e.clientY - 60) + 'px';
